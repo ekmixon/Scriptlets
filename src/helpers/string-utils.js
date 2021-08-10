@@ -24,12 +24,21 @@ export const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  * @returns {RegExp}
  */
 export const toRegExp = (str) => {
+    const DEFAULT_VALUE = '.?';
+    const defaultRegexp = new RegExp(DEFAULT_VALUE);
     if (!str || str === '') {
-        const DEFAULT_VALUE = '.?';
-        return new RegExp(DEFAULT_VALUE);
+        return defaultRegexp;
     }
     if (str[0] === '/' && str[str.length - 1] === '/') {
-        return new RegExp(str.slice(1, -1));
+        let regexp;
+        // return 'default regexp' for matching every case
+        // if passed string can not be converted to regexp
+        try {
+            regexp = new RegExp(str.slice(1, -1));
+            return regexp;
+        } catch (e) {
+            return defaultRegexp;
+        }
     }
     const escaped = str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return new RegExp(escaped);
