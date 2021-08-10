@@ -32,7 +32,7 @@ import {
  * example.org#%#//scriptlet('prevent-window-open'[, match[, delay[, replacement]]])
  * ```
  *
- * - `match` - optional, string or regular expression. If not set, all window.open calls will be matched.
+ * - `match` - optional, string or regular expression. If not set or regular expression is invalid, all window.open calls will be matched.
  * If starts with `!`, scriptlet will not match the stringified callback but all other will be defused.
  * If do not start with `!`, the stringified callback will be matched.
  * - `delay` - optional, number of seconds. If not set, scriptlet will return `null`,

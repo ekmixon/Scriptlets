@@ -30,10 +30,10 @@ import {
  * ```
  *
  * - `propsToMatch` - optional, string of space-separated properties to match; possible props:
- *   - string or regular expression for matching the URL passed to fetch call; empty string or wildcard `*` for all fetch calls match
+ *   - string or regular expression for matching the URL passed to fetch call; empty string, wildcard `*` or invalid regular expression will match all fetch calls
  *   - colon-separated pairs `name:value` where
  *     - `name` is [`init` option name](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#parameters)
- *     - `value` is string or regular expression for matching the value of the option passed to fetch call
+ *     - `value` is string or regular expression for matching the value of the option passed to fetch call; invalid regular expression will cause any value matching
  *
  * > Usage with no arguments will log fetch calls to browser console;
  * which is usefull for debugging but permitted for production filter lists.

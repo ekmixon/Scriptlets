@@ -47,11 +47,12 @@ import {
  *         - `falseFunc` - function returning false
  *         - `''` - empty string
  *         - `-1` - number value `-1`
- * - `stack` - optional, string or regular expression that must match the current function call stack trace
+ * - `stack` - optional, string or regular expression that must match the current function call stack trace;
+ * if regular expression is invalid it will be skipped
  *
  * **Examples**
  * ```
- * ! window.firstConst === false // this comparision will return false
+ * ! window.firstConst === false // this comparison will return false
  * example.org#%#//scriptlet('set-constant', 'firstConst', 'false')
  *
  * ! window.second() === trueFunc // 'second' call will return true
