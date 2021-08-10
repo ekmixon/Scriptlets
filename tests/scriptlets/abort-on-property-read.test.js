@@ -118,3 +118,17 @@ test('simple, matches stack of our own script', (assert) => {
 
     assert.strictEqual(window.hit, undefined, 'hit should NOT fire');
 });
+
+test('invalid regex for stack matching -> match all', (assert) => {
+    window[PROPERTY] = 'value';
+    const stackMatch = '/\\/';
+    const scriptletArgs = [PROPERTY, stackMatch];
+    runScriptlet(name, scriptletArgs);
+
+    assert.throws(
+        () => window[PROPERTY],
+        /ReferenceError/,
+        `should throw Reference error when try to access property ${PROPERTY}`,
+    );
+    assert.strictEqual(window.hit, 'FIRED', 'hit fired');
+});
