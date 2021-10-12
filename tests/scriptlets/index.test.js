@@ -35,5 +35,8 @@ import './hide-in-shadow-dom.test';
 import './remove-in-shadow-dom.test';
 import './no-floc.test';
 import './prevent-fetch.test';
+import './prevent-xhr.test';
 import './set-local-storage-item.test';
 import './set-session-storage-item.test';
+import './abort-on-stack-trace.test';
+import './log-on-stack-trace.test';

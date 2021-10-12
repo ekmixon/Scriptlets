@@ -40,3 +40,6 @@ export * from './no-floc';
 export * from './prevent-fetch';
 export * from './set-local-storage-item';
 export * from './set-session-storage-item';
+export * from './abort-on-stack-trace';
+export * from './log-on-stack-trace';
+export * from './prevent-xhr';
