@@ -8,7 +8,8 @@ const name = 'scriptlets-redirects helpers';
 module(name);
 
 test('Test toRegExp for valid inputs', (assert) => {
-    const defaultRegexp = new RegExp('.?');
+    const DEFAULT_VALUE = '.?';
+    const defaultRegexp = new RegExp(DEFAULT_VALUE);
     let inputStr;
     let expRegex;
 
@@ -22,18 +23,28 @@ test('Test toRegExp for valid inputs', (assert) => {
 
     inputStr = '';
     assert.deepEqual(toRegExp(inputStr), defaultRegexp);
+});
 
-    // return 'default regexp' for matching every case
-    // if passed string can not be converted to regexp
-    inputStr = '/\\/';
-    assert.deepEqual(toRegExp(inputStr), defaultRegexp);
+test('Test toRegExp for invalid inputs', (assert) => {
+    let inputStr;
 
-    inputStr = '/[/';
-    assert.deepEqual(toRegExp(inputStr), defaultRegexp);
+    assert.throws(() => {
+        inputStr = '/\\/';
+        toRegExp(inputStr);
+    });
 
-    inputStr = '/*/';
-    assert.deepEqual(toRegExp(inputStr), defaultRegexp);
+    assert.throws(() => {
+        inputStr = '/[/';
+        toRegExp(inputStr);
+    });
 
-    inputStr = '/[0-9]++/';
-    assert.deepEqual(toRegExp(inputStr), defaultRegexp);
+    assert.throws(() => {
+        inputStr = '/*/';
+        toRegExp(inputStr);
+    });
+
+    assert.throws(() => {
+        inputStr = '/[0-9]++/';
+        toRegExp(inputStr);
+    });
 });

@@ -18,29 +18,28 @@ export const replaceAll = (input, substr, newSubstr) => input.split(substr).join
 export const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
- * Converts search string to the regexp
- * TODO think about nested dependencies, but be careful with dependency loops
- * @param {string} str search string
- * @returns {RegExp}
+ * A literal string or regexp pattern wrapped in forward slashes.
+ * For example, 'simpleStr' or '/adblock|_0x/'.
+ * @typedef {string} RawStrPattern
  */
-export const toRegExp = (str) => {
+
+/**
+ * Converts string to the regexp
+ * TODO think about nested dependencies, but be careful with dependency loops
+ * @param {RawStrPattern} [input=''] literal string or regexp pattern; defaults to '' (empty string)
+ * @returns {RegExp} regular expression; defaults to /.?/
+ * @throws {SyntaxError} Throw an error for invalid regex pattern
+ */
+export const toRegExp = (input = '') => {
     const DEFAULT_VALUE = '.?';
-    const defaultRegexp = new RegExp(DEFAULT_VALUE);
-    if (!str || str === '') {
-        return defaultRegexp;
+    const FORWARD_SLASH = '/';
+    if (input === '') {
+        return new RegExp(DEFAULT_VALUE);
     }
-    if (str[0] === '/' && str[str.length - 1] === '/') {
-        let regexp;
-        // return 'default regexp' for matching every case
-        // if passed string can not be converted to regexp
-        try {
-            regexp = new RegExp(str.slice(1, -1));
-            return regexp;
-        } catch (e) {
-            return defaultRegexp;
-        }
+    if (input[0] === FORWARD_SLASH && input[input.length - 1] === FORWARD_SLASH) {
+        return new RegExp(input.slice(1, -1));
     }
-    const escaped = str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escaped = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return new RegExp(escaped);
 };
 
