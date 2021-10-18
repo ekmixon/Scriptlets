@@ -28,8 +28,9 @@ import {
  * ```
  *
  * - `property` - required, path to a property (joined with `.` if needed). The property must be attached to `window`
- * - `search` - optional, string or regular expression that must match the inline script contents.
- * If not set or regular expression is invalid, abort all inline scripts which are trying to access the specified property
+ * - `search` - optional, string or regular expression that must match the inline script content.
+ * Defaults to abort all scripts which are trying to access the specified property.
+ * Invalid regular expression will cause exit and rule will not work.
  *
  * > Note please that for inline script with addEventListener in it
  * `property` should be set as `EventTarget.prototype.addEventListener`,
@@ -71,7 +72,18 @@ import {
  */
 /* eslint-enable max-len */
 export function abortCurrentInlineScript(source, property, search) {
-    const searchRegexp = toRegExp(search);
+    let searchRegexp;
+    try {
+        searchRegexp = toRegExp(search);
+    } catch (e) {
+        // log the error only while debugging
+        if (source.verbose) {
+            // eslint-disable-next-line no-console
+            console.log(e);
+        }
+        return;
+    }
+
     const rid = randomId();
 
     const getCurrentScript = () => {
