@@ -4,8 +4,9 @@ import {
     getPropertyInChain,
     createOnErrorHandler,
     hit,
-    toRegExp,
     matchStackTrace,
+    // following helpers are needed for helpers above
+    toRegExp,
 } from '../helpers';
 
 /* eslint-disable max-len */
@@ -105,10 +106,10 @@ abortOnStacktrace.names = [
 ];
 abortOnStacktrace.injections = [
     randomId,
-    toRegExp,
     setPropertyAccess,
     getPropertyInChain,
     createOnErrorHandler,
     hit,
     matchStackTrace,
+    toRegExp,
 ];
