@@ -100,32 +100,6 @@ test('Patched textContent', (assert) => {
     assert.strictEqual(window.hit, 'FIRED', 'hit fired');
 });
 
-test('Patched textContent', (assert) => {
-    window.onerror = onError(assert);
-    const property = 'alert';
-    const search = 'test';
-    const scriptletArgs = [property, search];
-    runScriptlet(name, scriptletArgs);
-
-    addAndRemoveInlineScript(`
-    function generateContent() {
-        return void 0 === generateContent.val && (generateContent.val = " \nwindow.${property}('blablabla');");
-      }
-
-      (function () {
-        try {
-          Object.defineProperty(document.currentScript, "textContent", {
-            get: generateContent
-          });
-        } catch (e) {}
-
-        ${property}("test");
-      })();
-    `);
-
-    assert.strictEqual(window.hit, 'FIRED', 'hit fired');
-});
-
 test('does not abort script -- invalid regexp pattern', (assert) => {
     window.onerror = onError(assert);
     const property = '___aaa6';
