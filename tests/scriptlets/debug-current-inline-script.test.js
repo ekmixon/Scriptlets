@@ -68,7 +68,7 @@ test('doesnt aborts script which is not specified by search', (assert) => {
 
     addAndRemoveInlineScript(`window.${property};`);
 
-    assert.notStrictEqual(window.hit, undefined, 'hit should NOT fire');
+    assert.strictEqual(window.hit, 'FIRED', 'hit fired');
 });
 
 test('searches script by regexp', (assert) => {
@@ -81,4 +81,59 @@ test('searches script by regexp', (assert) => {
     addAndRemoveInlineScript(`window.${property};`);
 
     assert.strictEqual(window.hit, 'FIRED', 'hit fired');
+});
+
+test('Patched textContent', (assert) => {
+    window.onerror = onError(assert);
+    const property = '___aaa5';
+    const search = '/a{3}/';
+    const scriptletArgs = [property, search];
+    runScriptlet(name, scriptletArgs);
+
+    addAndRemoveInlineScript(`
+        Object.defineProperty(document.currentScript, 'textContent', {
+            get: () => '',
+        });
+        window.${property};
+    `);
+
+    assert.strictEqual(window.hit, 'FIRED', 'hit fired');
+});
+
+test('Patched textContent', (assert) => {
+    window.onerror = onError(assert);
+    const property = 'alert';
+    const search = 'test';
+    const scriptletArgs = [property, search];
+    runScriptlet(name, scriptletArgs);
+
+    addAndRemoveInlineScript(`
+    function generateContent() {
+        return void 0 === generateContent.val && (generateContent.val = " \nwindow.${property}('blablabla');");
+      }
+
+      (function () {
+        try {
+          Object.defineProperty(document.currentScript, "textContent", {
+            get: generateContent
+          });
+        } catch (e) {}
+
+        ${property}("test");
+      })();
+    `);
+
+    assert.strictEqual(window.hit, 'FIRED', 'hit fired');
+});
+
+test('does not abort script -- invalid regexp pattern', (assert) => {
+    window.onerror = onError(assert);
+    const property = '___aaa6';
+    const search = '/\\/';
+    const scriptletArgs = [property, search];
+    runScriptlet(name, scriptletArgs, false);
+
+    addAndRemoveInlineScript(`window.${property};`);
+
+    assert.strictEqual(window.hit, undefined, 'should not hit');
 });

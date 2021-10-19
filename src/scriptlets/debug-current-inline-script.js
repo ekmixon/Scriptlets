@@ -24,7 +24,17 @@ import {
  */
 /* eslint-enable max-len */
 export function debugCurrentInlineScript(source, property, search) {
-    const searchRegexp = toRegExp(search);
+    let searchRegexp;
+    try {
+        searchRegexp = toRegExp(search);
+    } catch (e) {
+        // log the error only while debugging
+        if (source.verbose) {
+            // eslint-disable-next-line no-console
+            console.log(e);
+        }
+        return;
+    }
     const rid = randomId();
 
     const getCurrentScript = () => {
@@ -39,12 +49,26 @@ export function debugCurrentInlineScript(source, property, search) {
 
     const abort = () => {
         const scriptEl = getCurrentScript();
+        if (!scriptEl) {
+            return;
+        }
+        let content = scriptEl.textContent;
+
+        // We are using Node.prototype.textContent property descriptor
+        // to get the real script content
+        // even when document.currentScript.textContent is replaced.
+        // https://github.com/AdguardTeam/Scriptlets/issues/57#issuecomment-593638991
+        try {
+            const textContentGetter = Object.getOwnPropertyDescriptor(Node.prototype, 'textContent').get;
+            content = textContentGetter.call(scriptEl);
+        } catch (e) { } // eslint-disable-line no-empty
+
         if (scriptEl instanceof HTMLScriptElement
-            && scriptEl.textContent.length > 0
+            && content.length > 0
             && scriptEl !== ourScript
-            && (!search || searchRegexp.test(scriptEl.textContent))) {
+            && searchRegexp.test(content)) {
             hit(source);
-            debugger; // eslint-disable-line no-debugger
+            throw new ReferenceError(rid);
         }
     };
 
@@ -52,6 +76,20 @@ export function debugCurrentInlineScript(source, property, search) {
         const chainInfo = getPropertyInChain(owner, property);
         let { base } = chainInfo;
         const { prop, chain } = chainInfo;
+
+        // The scriptlet might be executed before the chain property has been created
+        // (for instance, document.body before the HTML body was loaded).
+        // In this case we're checking whether the base element exists or not
+        // and if not, we simply exit without overriding anything.
+        // e.g. https://github.com/AdguardTeam/Scriptlets/issues/57#issuecomment-575841092
+        if (base instanceof Object === false && base === null) {
+            const props = property.split('.');
+            const propIndex = props.indexOf(prop);
+            const baseName = props[propIndex - 1];
+            console.log(`The scriptlet had been executed before the ${baseName} was loaded.`); // eslint-disable-line no-console
+            return;
+        }
+
         if (chain) {
             const setter = (a) => {
                 base = a;
