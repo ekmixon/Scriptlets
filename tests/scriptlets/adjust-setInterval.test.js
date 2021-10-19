@@ -245,7 +245,7 @@ test('no match', (assert) => {
 
 test('no match -- invalid regexp pattern', (assert) => {
     const scriptletArgs = ['/\\/'];
-    runScriptlet(name, scriptletArgs);
+    runScriptlet(name, scriptletArgs, false);
 
     const done1 = assert.async();
     const done2 = assert.async();
