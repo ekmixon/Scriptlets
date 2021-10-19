@@ -68,7 +68,7 @@ export function debugCurrentInlineScript(source, property, search) {
             && scriptEl !== ourScript
             && searchRegexp.test(content)) {
             hit(source);
-            throw new ReferenceError(rid);
+            debugger; // eslint-disable-line no-debugger
         }
     };
 
