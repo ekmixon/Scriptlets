@@ -16,19 +16,28 @@ import { toRegExp, hit } from '../helpers';
  * example.org#%#//scriptlet('prevent-eval-if'[, search])
  * ```
  *
- * - `search` - optional, string or regexp for matching stringified eval payload.
- * If 'search is not specified — all stringified eval payload will be matched
+ * - `search` - optional, string or regular expression matching the stringified eval payload;
+ * defaults to match all stringified eval payloads;
+ * invalid regular expression will cause exit and rule will not work
  *
  * **Examples**
  * ```
  * ! Prevents eval if it matches 'test'
  * example.org#%#//scriptlet('prevent-eval-if', 'test')
  * ```
- *
- * @param {string|RegExp} [search] string or regexp matching stringified eval payload
  */
 export function preventEvalIf(source, search) {
-    const searchRegexp = toRegExp(search);
+    let searchRegexp;
+    try {
+        searchRegexp = toRegExp(search);
+    } catch (e) {
+        // log the error only while debugging
+        if (source.verbose) {
+            // eslint-disable-next-line no-console
+            console.log(e);
+        }
+        return;
+    }
 
     const nativeEval = window.eval;
     window.eval = function (payload) {
