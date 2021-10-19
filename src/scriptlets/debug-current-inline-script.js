@@ -23,7 +23,7 @@ import {
  * ```
  */
 /* eslint-enable max-len */
-export function debugCurrentInlineScript(source, property, search = null) {
+export function debugCurrentInlineScript(source, property, search) {
     const searchRegexp = toRegExp(search);
     const rid = randomId();
 
