@@ -55,7 +55,7 @@ test('Remove cookie by match', (assert) => {
 test('Remove all cookies', (assert) => {
     const cName = '__test-cookie-name__2';
     document.cookie = `${cName}=cookie`;
-    runScriptlet(name, [null]);
+    runScriptlet(name);
 
     assert.strictEqual(window.hit, 'FIRED');
     assert.strictEqual(document.cookie.includes(cName), false, 'If no match delete all cookies for domain');
